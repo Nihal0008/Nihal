@@ -31,9 +31,12 @@ async def mydramalist_search(_, message):
                     return await editMessage(temp, "<i>No Results Found</i>, Try Again or Use <b>MyDramaList Link</b>")
                 mdl = await resp.json()
         for drama in mdl['results']['dramas']:
-            buttons.ibutton(f"🎬 {drama.get('title')} ({drama.get('year')})", f"mdl {user_id} drama {drama.get('slug')}")
+            #shortened_title = f[:15]}..." if len(drama.get('title')) > 15 else drama.get('title')
+            # Check if the drama type is 'Korean Drama' before adding it to the buttons
+            if drama.get('type') == 'Korean Drama':
+                buttons.ibutton(f"🎬 {drama.get('title')} ({drama.get('year')})", f"mdl {user_id} drama {drama.get('slug')}")
         buttons.ibutton("🚫 Close 🚫", f"mdl {user_id} close")
-        await editMessage(temp, '<b><i>Dramas found on MyDramaList :</i></b>', buttons.build_menu(1))
+        await editMessage(temp, '<b><i>Korean Dramas found on MyDramaList :</i></b>', buttons.build_menu(1))
     else:
         await sendMessage(message, f'<i>Send Movie / TV Series Name along with /{BotCommands.MyDramaListCommand} Command</i>')
 
@@ -43,12 +46,14 @@ async def extract_MDL(slug):
         async with sess.get(f'{MDL_API}/id/{slug}') as resp:
             mdl = (await resp.json())["data"]
     plot = mdl.get('synopsis')
-    if plot and len(plot) > 300:
-        plot = f"{plot[:300]}..."
+    if plot and len(plot) > 100:
+        plot = f"{plot[:100]}..."
     return {
         'title': mdl.get('title'),
+        'complete_title': mdl.get('complete_title'),
+        'native_title': mdl['others'].get("native_title"),
         'score': mdl['details'].get('score'),
-        "aka": list_to_str(mdl.get("also_known_as")),
+        'aka': mdl['others'].get("also_known_as"),
         'episodes': mdl['details'].get("episodes"),
         'type': mdl['details'].get("type"),
         "cast": list_to_str(mdl.get("casts"), cast=True),
