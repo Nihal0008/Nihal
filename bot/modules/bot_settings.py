@@ -144,6 +144,10 @@ async def load_config():
     JIODRIVE_TOKEN = environ.get('JIODRIVE_TOKEN', '')
     if len(JIODRIVE_TOKEN) == 0:
         JIODRIVE_TOKEN = ''
+        
+    ALL_DEBRID_API = environ.get('ALL_DEBRID_API', '')
+    if len(ALL_DEBRID_API) == 0:
+        ALL_DEBRID_API = ''
 
     REAL_DEBRID_API = environ.get('REAL_DEBRID_API', '')
     if len(REAL_DEBRID_API) == 0:
@@ -280,7 +284,11 @@ async def load_config():
 
     INCOMPLETE_TASK_NOTIFIER = environ.get('INCOMPLETE_TASK_NOTIFIER', '')
     INCOMPLETE_TASK_NOTIFIER = INCOMPLETE_TASK_NOTIFIER.lower() == 'true'
-    if not INCOMPLETE_TASK_NOTIFIER and DATABASE_URL:
+    
+    RESUME_INCOMPLETE_TASKS = environ.get('RESUME_INCOMPLETE_TASKS', '')
+    RESUME_INCOMPLETE_TASKS = RESUME_INCOMPLETE_TASKS.lower() == 'true'
+    
+    if not INCOMPLETE_TASK_NOTIFIER and not RESUME_INCOMPLETE_TASKS and DATABASE_URL:
         await DbManger().trunc_table('tasks')
 
     STOP_DUPLICATE = environ.get('STOP_DUPLICATE', '')
@@ -597,6 +605,7 @@ async def load_config():
                         'CAP_FONT': CAP_FONT,
                         'CMD_SUFFIX': CMD_SUFFIX,
                         'DATABASE_URL': DATABASE_URL,
+                        'ALL_DEBRID_API': ALL_DEBRID_API,
                         'REAL_DEBRID_API': REAL_DEBRID_API,
                         'DEBRID_LINK_API': DEBRID_LINK_API,
                         'FILELION_API': FILELION_API,
@@ -640,6 +649,7 @@ async def load_config():
                         'EXTENSION_FILTER': EXTENSION_FILTER,
                         'GDRIVE_ID': GDRIVE_ID,
                         'INCOMPLETE_TASK_NOTIFIER': INCOMPLETE_TASK_NOTIFIER,
+                        'RESUME_INCOMPLETE_TASKS': RESUME_INCOMPLETE_TASKS,
                         'INDEX_URL': INDEX_URL,
                         'IS_TEAM_DRIVE': IS_TEAM_DRIVE,
                         'LEECH_FILENAME_PREFIX': LEECH_FILENAME_PREFIX,

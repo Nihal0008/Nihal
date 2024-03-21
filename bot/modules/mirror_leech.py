@@ -103,9 +103,9 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
 
     if not isinstance(isBulk, bool):
         dargs = isBulk.split(':')
-        bulk_start = dargs[0] or None
+        bulk_start = dargs[0] or 0
         if len(dargs) == 2:
-            bulk_end = dargs[1] or None
+            bulk_end = dargs[1] or 0
         isBulk = True
         
     if drive_id and is_gdrive_link(drive_id):
@@ -122,10 +122,11 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
 
     if isBulk:
         try:
-            bulk = await extract_bulk_links(message, bulk_start, bulk_end)
+            bulk = await extract_bulk_links(message, bulk_start, bulk_end, link)
             if len(bulk) == 0:
                 raise ValueError('Bulk Empty!')
-        except:
+        except Exception as e:
+            LOGGER.error(str(e))
             await sendMessage(message, 'Reply to text file or tg message that have links seperated by new line!')
             return
         b_msg = input_list[:1]
@@ -262,11 +263,16 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             await deleteMessage(process_msg)
 
     if not isLeech:
-        if config_dict['DEFAULT_UPLOAD'] == 'rc' and not up or up == 'rc':
+
+        user_id = message.from_user.id
+        user_dict = user_data.get(user_id, {})
+        du = user_dict.get('du_opt') or config_dict['DEFAULT_UPLOAD']
+
+        if du == 'rc' and not up or up == 'rc':
             up = config_dict['RCLONE_PATH']
-        elif config_dict['DEFAULT_UPLOAD'] == 'ddl' and not up or up == 'ddl':
+        elif du == 'ddl' and not up or up == 'ddl':
             up = 'ddl'
-        if not up and config_dict['DEFAULT_UPLOAD'] == 'gd':
+        if not up and du == 'gd':
             up = 'gd'
             user_tds = await fetch_user_tds(message.from_user.id)
             if not drive_id and gd_cat:

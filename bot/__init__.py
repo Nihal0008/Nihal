@@ -24,7 +24,7 @@ setdefaulttimeout(600)
 
 botStartTime = time()
 
-basicConfig(format="[%(asctime)s] [%(levelname)s] - %(message)s", #  [%(filename)s:%(lineno)d]
+basicConfig(format="[%(asctime)s] [%(levelname)s] - %(message)s - ( %(filename)s, %(lineno)d )",
             datefmt="%d-%b-%y %I:%M:%S %p",
             handlers=[FileHandler('log.txt'), StreamHandler()],
             level=INFO)
@@ -42,6 +42,7 @@ extra_buttons = {}
 list_drives_dict = {}
 shorteners_list = []
 categories_dict = {}
+gd_search_dict = {}
 aria2_options = {}
 qbit_options = {}
 queued_dl = {}
@@ -234,6 +235,10 @@ if len(GDTOT_CRYPT) == 0:
 JIODRIVE_TOKEN = environ.get('JIODRIVE_TOKEN', '')
 if len(JIODRIVE_TOKEN) == 0:
     JIODRIVE_TOKEN = ''
+    
+ALL_DEBRID_API = environ.get('ALL_DEBRID_API', '')
+if len(ALL_DEBRID_API) == 0:
+    ALL_DEBRID_API = ''
 
 REAL_DEBRID_API = environ.get('REAL_DEBRID_API', '')
 if len(REAL_DEBRID_API) == 0:
@@ -344,6 +349,9 @@ QUEUE_UPLOAD = '' if len(QUEUE_UPLOAD) == 0 else int(QUEUE_UPLOAD)
 
 INCOMPLETE_TASK_NOTIFIER = environ.get('INCOMPLETE_TASK_NOTIFIER', '')
 INCOMPLETE_TASK_NOTIFIER = INCOMPLETE_TASK_NOTIFIER.lower() == 'true'
+
+RESUME_INCOMPLETE_TASKS = environ.get('RESUME_INCOMPLETE_TASKS', '')
+RESUME_INCOMPLETE_TASKS = RESUME_INCOMPLETE_TASKS.lower() == 'true'
 
 STOP_DUPLICATE = environ.get('STOP_DUPLICATE', '')
 STOP_DUPLICATE = STOP_DUPLICATE.lower() == 'true'
@@ -596,6 +604,7 @@ config_dict = {'ANIME_TEMPLATE': ANIME_TEMPLATE,
                'CAP_FONT': CAP_FONT,
                'CMD_SUFFIX': CMD_SUFFIX,
                'DATABASE_URL': DATABASE_URL,
+               'ALL_DEBRID_API': ALL_DEBRID_API,
                'REAL_DEBRID_API': REAL_DEBRID_API,
                'DEBRID_LINK_API': DEBRID_LINK_API,
                'FILELION_API': FILELION_API,
@@ -640,6 +649,7 @@ config_dict = {'ANIME_TEMPLATE': ANIME_TEMPLATE,
                'EXTENSION_FILTER': EXTENSION_FILTER,
                'GDRIVE_ID': GDRIVE_ID,
                'INCOMPLETE_TASK_NOTIFIER': INCOMPLETE_TASK_NOTIFIER,
+               'RESUME_INCOMPLETE_TASKS': RESUME_INCOMPLETE_TASKS,
                'INDEX_URL': INDEX_URL,
                'IS_TEAM_DRIVE': IS_TEAM_DRIVE,
                'LEECH_FILENAME_PREFIX': LEECH_FILENAME_PREFIX,
